@@ -1,0 +1,57 @@
+A = imread('E:\image pro project\pic5.png');
+I = rgb2gray(A);
+J = histeq(I); C = adapthisteq(I); subplot(4,2,1);
+imshow(A); subplot(4,2,2); imhist(A);
+subplot(4,2,3); imshow( I ); subplot(4,2,4); imhist(I);
+subplot(4,2,5); imshow(J); subplot(4,2,6); imhist(J);
+subplot(4,2,7); imshow(C); subplot(4,2,8);
+imhist(C); figure;
+
+N1 = imnoise(C,'gaussian',0,0.025); K1 =
+wiener2(N1,[5,5]); imshow(K1);
+title('Noise Removal by Wiener Filter'); figure;
+
+N2 = imnoise(C,'salt & pepper',0.02);
+K2 = medfilt2(N2); imshow(K2);
+title('Noise Removal by Kmedian');
+input_im=imread('E:\image pro project\pic5.png'); sz_im=size(input_im);
+
+cform = makecform('srgb2lab'); lab_he =
+applycform(input_im,cform); ab =
+double(lab_he(:,:,2:3)); nrows =
+size(ab,1); ncols = size(ab,2); ab =
+reshape(ab,nrows*ncols,2);
+ nColors = 3;
+[cluster_idx, cluster_center] = kmeans(ab,nColors,'distance','sqEuclidean',
+'Replicates',3);
+
+pixel_labels = reshape(cluster_idx,nrows,ncols); 
+segmented_images = cell(1,3); rgb_label =
+repmat(pixel_labels,[1 1 3]); for k = 1:nColors
+color = input_im; color(rgb_label ~= k) = 0;
+segmented_images{k} = color; end
+for k=1:nColors
+title_string=sprintf('objects in cluster %d',k);
+en
+d
+finalSegmentedImage=segmented_images{1};
+close all;
+
+Icombine = [input_im finalSegmentedImage]; imshow(Icombine);
+[segment_idx, segment_center] =
+kmeans(ab,nColors,'distance','sqEuclidean','Replicates', 3, 'start', seeds);
+rng(123); numReplicates = 3;
+ind = randperm(size(ab,1), numReplicates*nColors);
+
+seeds = permute(reshape(ab(ind,:).', [2 nColors numReplicates]), [2 1 3]);
+
+[segment_idx, segment_center] =
+kmeans(ab,nColors,'distance','sqEuclidean','Replicates', numReplicates,
+'start', seeds); rng(123); numReplicates =
+3; ind = randperm(size(ab,1)); ind =
+ind(1:numReplicates*nColors);
+
+seeds = permute(reshape(ab(ind,:).', [2 nColors numReplicates]), [2 1 3]);
+
+[segment_idx, segment_center] =
+kmeans(ab,nColors,'distance','sqEuclidean','Replicates', numReplicates, 'start', seeds); 
